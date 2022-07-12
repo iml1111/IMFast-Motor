@@ -11,8 +11,6 @@ This implementation is an extension structure of `IMFast` optimized for Motor(Mo
 ```
 ```
 
-
-
 ## References
 
 - https://github.com/iml1111/IMFast

@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     jwt_refresh_expires: int = 3600 * 24 * 30
     # Slow API settings
     slow_api_time: float = 0.5
+    # Mongodb settings
+    mongodb_uri: str = "mongodb://localhost:27017"
+    mongodb_db_name: str = "Imfast"
 
     class Config:
         env_prefix = f"{APP_NAME.upper()}_"
