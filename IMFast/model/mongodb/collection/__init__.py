@@ -57,3 +57,4 @@ class Schema(BaseModel):
 
 
 from .log import Log
+from .app_config import AppConfig

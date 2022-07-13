@@ -24,6 +24,7 @@ class Log(Model):
             }}
 
     def indexes(self) -> list:
+        # TODO Required index
         return []
 
     async def insert_one(self, log: Type[BaseModel]):

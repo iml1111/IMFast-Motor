@@ -1,11 +1,13 @@
+from typing import Any
 from fastapi import Depends
 from loguru import logger
 from app.depends.common import skip_limit
-from model.mongodb.collection import Log
+from model.mongodb.collection import Log, AppConfig
 from model.appmodel.log import CreateLog
 from app.response import OK, CREATED
 from . import api
 
+from pymongo.results import UpdateResult
 
 @api.get(
     '/log',
@@ -35,7 +37,17 @@ async def create_sample_log(log: CreateLog):
 @api.get(
     '/author',
     summary="Get Author",
-    response_model=OK[str])
+    response_model=OK[Any])
 async def get_author():
+    author = await AppConfig().get_author()
+    return OK(result=author)
 
-    return OK(result="Author")
+
+@api.put(
+    '/author',
+    summary="Update Author",
+    response_model=CREATED[Any]
+)
+async def update_author(author: str):
+    await AppConfig().upsert_author(author)
+    return CREATED()
