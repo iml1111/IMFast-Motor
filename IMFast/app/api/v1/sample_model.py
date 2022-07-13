@@ -1,4 +1,6 @@
+from fastapi import Depends
 from loguru import logger
+from app.depends.common import skip_limit
 from model.mongodb.collection import Log
 from model.appmodel.log import CreateLog
 from app.response import OK, CREATED
@@ -10,11 +12,13 @@ from . import api
     summary="Get Sample Log",
     response_model=OK[list[Log.LogSchema]]
 )
-async def get_sample_log(skip: int = 0, limit: int = 10):
+async def get_sample_log(range: tuple = Depends(skip_limit)):
+    skip, limit = range
     logs = await (
         Log().find(skip=skip, limit=limit)
         .to_list(length=limit)
     )
+    logs = [Log.LogSchema(**log) for log in logs]
     return OK(result=logs)
 
 
@@ -33,5 +37,5 @@ async def create_sample_log(log: CreateLog):
     summary="Get Author",
     response_model=OK[str])
 async def get_author():
-    
+
     return OK(result="Author")
