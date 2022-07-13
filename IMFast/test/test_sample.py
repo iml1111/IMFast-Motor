@@ -37,3 +37,4 @@ async def test_bad_request_api(client: AsyncClient):
     """Test bad request api"""
     response = await client.put("/api/v1/sample/bad_request")
     assert response.status_code == 400
+    assert response.json()['detail'] == 'BAD'

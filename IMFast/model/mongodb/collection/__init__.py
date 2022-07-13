@@ -19,7 +19,7 @@ class Model(metaclass=ABCMeta):
         """Create index"""
         index = self.index()
         if index:
-            self.col.create_indexes(indices)
+            self.col.create_indexes(index)
 
     def p(self, *args) -> dict:
         """projection shortcut method"""
