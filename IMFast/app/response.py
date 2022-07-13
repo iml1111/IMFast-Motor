@@ -25,6 +25,7 @@ class Response200ModelFactory:
             status_code=200,
         )
 
+
 OK = Response200ModelFactory()
 
 
@@ -46,6 +47,7 @@ class Response201ModelFactory:
             {'msg': 'created', 'result': result},
             status_code=201,
         )
+
 
 CREATED = Response201ModelFactory()
 

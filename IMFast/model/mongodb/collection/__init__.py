@@ -43,7 +43,8 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 
-class WriteSchema(BaseModel):
+class Schema(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     version: int = Field(default=1, alias="__version__")
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -53,10 +54,6 @@ class WriteSchema(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         # schema_extra = {"example": {}}
-
-
-class Schema(WriteSchema):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
 
 from .log import Log
