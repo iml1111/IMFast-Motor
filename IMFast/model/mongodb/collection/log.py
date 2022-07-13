@@ -1,4 +1,5 @@
-from model.appmodel.log import CreateLog
+from typing import Type
+from pydantic import BaseModel
 from model.mongodb.collection import Model, Schema
 
 
@@ -13,6 +14,7 @@ class Log(Model):
         status_code: int
 
         class Config:
+            # Document Sample
             schema_extra = {"example": {
                 "ipv4": "1.1.1.1",
                 "url": "http://example.com",
@@ -24,9 +26,11 @@ class Log(Model):
     def indexes(self) -> list:
         return []
 
-    async def insert_one(self, log: CreateLog):
+    async def insert_one(self, log: Type[BaseModel]):
         schemized_log = self.LogSchema(**log.dict())
-        return await self.col.insert_one(schemized_log.dict())
+        return await self.col.insert_one(
+            schemized_log.dict(exclude={'id'})
+        )
 
     def find(self, skip: int, limit: int):
         return (
