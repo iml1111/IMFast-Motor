@@ -1,5 +1,6 @@
 """
 https://www.mongodb.com/developer/languages/python/python-quickstart-fastapi/
+https://www.mongodb.com/developer/languages/python/farm-stack-fastapi-react-mongodb/
 """
 from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings
