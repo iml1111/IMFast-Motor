@@ -7,7 +7,6 @@ from model.appmodel.log import CreateLog
 from app.response import OK, CREATED
 from . import api
 
-from pymongo.results import UpdateResult
 
 @api.get(
     '/log',

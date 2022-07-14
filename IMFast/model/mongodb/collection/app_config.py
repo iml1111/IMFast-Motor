@@ -1,6 +1,5 @@
 from datetime import datetime
-from typing import Type, Any
-from pydantic import BaseModel
+from typing import Any
 from model.mongodb.collection import Model, Schema
 
 
@@ -26,6 +25,7 @@ class AppConfig(Model):
         return []
 
     async def upsert_author(self, author: str):
+        # TODO: Change Property
         return await self.col.update_one(
             {'name': 'author'},
             {'$set': {
@@ -38,4 +38,19 @@ class AppConfig(Model):
     async def get_author(self):
         return await self.col.find_one(
             {'name': 'author'}
+        )
+
+    async def upsert_server_startup_date(self):
+        return await self.col.update_one(
+            {'name': 'server_startup_date'},
+            {'$set': {
+                'value': datetime.now(),
+                'updated_at': datetime.now(),
+            }},
+            upsert=True
+        )
+
+    async def get_server_startup_date(self):
+        return await self.col.find_one(
+            {'name': 'server_startup_date'}
         )

@@ -14,7 +14,7 @@ def init_app(app: FastAPI, app_settings: Settings) -> None:
     @app.on_event("startup")
     async def startup():
         """run before the application starts"""
-        model.init_app(app, app_settings)
+        await model.init_app(app, app_settings)
         error_handler.init_app(app)
 
     @app.on_event("shutdown")
