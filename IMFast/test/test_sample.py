@@ -38,3 +38,10 @@ async def test_bad_request_api(client: AsyncClient):
     response = await client.put("/api/v1/sample/bad_request")
     assert response.status_code == 400
     assert response.json()['detail'] == 'BAD'
+
+
+@pytest.mark.anyio
+async def test_get_log_api(client: AsyncClient):
+    """Test get log api"""
+    response = await client.get("/api/v1/log")
+    assert response.status_code == 200

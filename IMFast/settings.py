@@ -41,7 +41,15 @@ class Settings(BaseSettings):
         ...
 
 
+class TestSettings(Settings):
+    """Test settings"""
+    slow_api_time: float = 1.0
+
+
 settings = Settings()
+
+
+
 
 
 if __name__ == '__main__':

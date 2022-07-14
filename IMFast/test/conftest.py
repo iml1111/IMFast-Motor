@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from model.mongodb import get_client
 from app import create_app
 from httpx import AsyncClient
-from settings import settings
+from settings import TestSettings
 
 # external fixtures
 from _pytest.logging import caplog as _caplog
@@ -22,6 +22,7 @@ def app() -> FastAPI:
     """
     Create a FastAPI application for the tests.
     """
+    settings: TestSettings = TestSettings()
     mongo_client: AsyncIOMotorClient = get_client(
         settings.mongodb_uri)
     app: FastAPI = create_app(settings, mongo_client)
