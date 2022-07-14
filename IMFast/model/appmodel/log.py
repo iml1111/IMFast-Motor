@@ -6,14 +6,14 @@ class CreateLog(BaseModel):
     ipv4: str
     url: str
     method: str
-    params: dict
+    body: str
     status_code: int
 
     class Config:
         schema_extra = {"example": {
             "ipv4": "8.8.8.8",
-            "url": "http://example.com",
+            "url": "/your/api/path",
             "method": "GET",
-            "params": {},
+            "body": "Some body",
             "status_code": 200,
         }}

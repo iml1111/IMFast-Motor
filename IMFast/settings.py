@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     # Mongodb settings
     mongodb_uri: str = "mongodb://localhost:27017"
     mongodb_db_name: str = "Imfast"
+    mongodb_api_log: bool = True
 
     class Config:
         env_prefix = f"{APP_NAME.upper()}_"

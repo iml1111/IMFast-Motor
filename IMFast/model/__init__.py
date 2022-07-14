@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from settings import Settings
+from model import mongodb
 from model.mongodb.collection import AppConfig
 # from model.mongodb.initializer import ...
 

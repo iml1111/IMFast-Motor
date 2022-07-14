@@ -1,9 +1,11 @@
 import time
+import asyncio
 from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
+from starlette_context import context
 from settings import settings, Settings
-
+from model.mongodb.collection import Log
 import model
 from app import error_handler
 
@@ -33,7 +35,8 @@ def init_app(app: FastAPI, app_settings: Settings) -> None:
         response.headers["X-Process-Time"] = str(process_time)
 
         if process_time >= settings.slow_api_time:
-            request_body = await request.body()
+            # Get body in the ContextMiddleware
+            request_body = context.get('body')
             log_str: str = (
                 f"\n!!! SLOW API DETECTED !!!\n"
                 f"time: {process_time}\n"
@@ -44,10 +47,21 @@ def init_app(app: FastAPI, app_settings: Settings) -> None:
 
         return response
 
-    @app.middleware('http')
-    async def hello_func_middleware(
-            request: Request,
-            call_next: Callable):
-        """executed before slow_api_tracker"""
-        # TODO: API Logging
-        return await call_next(request)
+    if app_settings.mongodb_api_log:
+        @app.middleware('http')
+        async def mongodb_api_logger(
+                request: Request,
+                call_next: Callable):
+            """
+            Mongodb API Logger Middleware
+            # How much fast using 'gather'?
+            """
+            response = await call_next(request)
+            await Log().insert_one_raw_dict({
+                "ipv4": request.client.host,
+                "url": request.url.path,
+                'method': request.method,
+                'body': (context.get('body') or b'').decode(),
+                'status_code': response.status_code,
+            })
+            return response

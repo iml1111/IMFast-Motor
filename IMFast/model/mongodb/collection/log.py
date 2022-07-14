@@ -11,7 +11,7 @@ class Log(Model):
         ipv4: str
         url: str
         method: str
-        params: dict
+        body: str
         status_code: int
 
         class Config:
@@ -20,7 +20,7 @@ class Log(Model):
                 "ipv4": "1.1.1.1",
                 "url": "http://example.com",
                 "method": "GET",
-                "params": {},
+                "body": "Some body",
                 "status_code": 200,
             }}
 
@@ -30,9 +30,15 @@ class Log(Model):
         ]
 
     async def insert_one(self, log: Type[BaseModel]):
-        schemized_log = self.LogSchema(**log.dict())
+        schemized_log = Log.LogSchema(**log.dict())
         return await self.col.insert_one(
             schemized_log.dict(exclude={'id'})
+        )
+
+    async def insert_one_raw_dict(self, log: dict):
+        log = self.LogSchema(**log)
+        return await self.col.insert_one(
+            log.dict(exclude={'id'})
         )
 
     def find(self, skip: int, limit: int):
