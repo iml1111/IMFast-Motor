@@ -39,7 +39,7 @@ async def create_sample_log(log: CreateLog):
     response_model=OK[Any])
 async def get_author():
     author = await AppConfig().get_author()
-    return OK(result=author)
+    return OK(result=author['value'])
 
 
 @api.put(

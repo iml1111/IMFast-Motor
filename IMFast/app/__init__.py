@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends
 from fastapi.responses import ORJSONResponse
+from motor.motor_asyncio import AsyncIOMotorClient
 from settings import Settings, __VERSION__
-from app.depends.common import parse_request_body
+from app.depends.common import parse_request_body, setup_db_context
 from app import api
 
 # Routers
@@ -17,7 +18,9 @@ from starlette_context.middleware import RawContextMiddleware
 from app.middleware import HelloMiddleware
 
 
-def create_app(settings: Settings) -> FastAPI:
+def create_app(
+        settings: Settings,
+        mongo_client: AsyncIOMotorClient) -> FastAPI:
     """Application Factory"""
     app = FastAPI(
         title=settings.app_name,
@@ -31,12 +34,17 @@ def create_app(settings: Settings) -> FastAPI:
         },
         docs_url=settings.docs_url,
         default_response_class=ORJSONResponse,
-        dependencies=[Depends(parse_request_body)],
+        dependencies=[
+            Depends(parse_request_body),
+            Depends(setup_db_context),
+        ],
     )
 
     # Built-in init
     settings.init_app(app)
-    api.init_app(app, settings)
+    api.init_app(app, settings, mongo_client)
+    app.mongo_client = mongo_client
+    app.mongo_db = mongo_client[settings.mongodb_db_name]
 
     # Extension/Middleware init
     app.add_middleware(

@@ -4,19 +4,23 @@ from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
 from starlette_context import context
+from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings, Settings
 from model.mongodb.collection import Log
 import model
 from app import error_handler
 
 
-def init_app(app: FastAPI, app_settings: Settings) -> None:
+def init_app(
+        app: FastAPI,
+        app_settings: Settings,
+        mongo_client: AsyncIOMotorClient) -> None:
     """Declare your built-in Functional Middleware"""
 
     @app.on_event("startup")
     async def startup():
         """run before the application starts"""
-        await model.init_app(app, app_settings)
+        await model.init_app(app, app_settings, mongo_client)
         error_handler.init_app(app)
 
     @app.on_event("shutdown")
@@ -57,7 +61,8 @@ def init_app(app: FastAPI, app_settings: Settings) -> None:
             # How much fast using 'gather'?
             """
             response = await call_next(request)
-            await Log().insert_one_raw_dict({
+            db = request.app.mongo_db
+            await Log(db).insert_one_raw_dict({
                 "ipv4": request.client.host,
                 "url": request.url.path,
                 'method': request.method,

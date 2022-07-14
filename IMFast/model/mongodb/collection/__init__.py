@@ -1,16 +1,19 @@
+from typing import Optional
 from datetime import datetime
 from abc import ABCMeta, abstractmethod
 from bson.objectid import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import Field, BaseModel
-from model.mongodb import mongo_db
+from starlette_context import context
 
 
 class Model(metaclass=ABCMeta):
 
-    def __init__(self, db: AsyncIOMotorDatabase = mongo_db):
-        self.col = db[self.__class__.__name__]
-
+    def __init__(self, db: Optional[AsyncIOMotorDatabase] = None):
+        if db is not None:
+            self.col = db[self.__class__.__name__]
+        else:
+            self.col = context.get('mongo_db')[self.__class__.__name__]
     @abstractmethod
     def indexes(self) -> list:
         """Collection indexes"""

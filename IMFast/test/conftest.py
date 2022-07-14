@@ -1,8 +1,9 @@
 import logging
 from fastapi import FastAPI
 from loguru import logger
-from pytest import fixture
 import pytest
+from motor.motor_asyncio import AsyncIOMotorClient
+from model.mongodb import get_client
 from app import create_app
 from httpx import AsyncClient
 from settings import settings
@@ -11,16 +12,23 @@ from settings import settings
 from _pytest.logging import caplog as _caplog
 
 
-@fixture(scope='session')
+@pytest.fixture(scope='session')
+def anyio_backend():
+    return 'asyncio'
+
+
+@pytest.fixture
 def app() -> FastAPI:
     """
     Create a FastAPI application for the tests.
     """
-    app: FastAPI = create_app(settings)
+    mongo_client: AsyncIOMotorClient = get_client(
+        settings.mongodb_uri)
+    app: FastAPI = create_app(settings, mongo_client)
     return app
 
 
-@fixture
+@pytest.fixture
 async def client(app: FastAPI) -> AsyncClient:
     """
     Create a test client for the FastAPI application.
@@ -31,7 +39,7 @@ async def client(app: FastAPI) -> AsyncClient:
         yield ac
 
 
-@fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def caplog(_caplog):
     """Overiding pytest-capturelog's caplog fixture."""
     class PropagatingLogger(logging.Handler):

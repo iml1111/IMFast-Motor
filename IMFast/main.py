@@ -4,10 +4,13 @@ Application Management Module
 import asyncio
 import click
 from fastapi import FastAPI
+from motor.motor_asyncio import AsyncIOMotorClient
 from app import create_app
+from model.mongodb import get_client
 from settings import settings
 
-application: FastAPI = create_app(settings)
+mongo_client: AsyncIOMotorClient = get_client(settings.mongodb_uri)
+application: FastAPI = create_app(settings, mongo_client)
 
 
 @click.group()

@@ -9,6 +9,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 requests
 httpx
-trio
 motor
 starlette-context
