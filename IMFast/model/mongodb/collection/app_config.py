@@ -27,7 +27,6 @@ class AppConfig(Model):
         ]
 
     async def upsert_author(self, author: str):
-        # TODO: Change Property
         return await self.col.update_one(
             {'name': 'author'},
             {'$set': {
