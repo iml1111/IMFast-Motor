@@ -1,6 +1,7 @@
 """
 Application Management Module
 """
+import asyncio
 import click
 from fastapi import FastAPI
 from app import create_app
@@ -15,21 +16,12 @@ def cli():
 
 
 @cli.command()
-def run():
-    """Please use 'imfast run'."""
-    raise NotImplementedError("Please use 'imfast run'.")
-
-
-@cli.command()
-def prod_run():
-    """Please use 'imfast prod-run'."""
-    raise NotImplementedError("Please use 'imfast prod-run'.")
-
-
-@cli.command()
 def init_db():
     """Sample command"""
-    click.echo('Initialized the database (if necessary)')
+    from model.mongodb.initializer import ModelInitializer
+    initializer = ModelInitializer()
+    asyncio.run(initializer.init_model())
+    click.echo("DB initialized.")
 
 
 @cli.command()
@@ -57,6 +49,18 @@ def routes():
             f'{route[0]: <{path_len + 2}}'
             f'{route[1]: <{method_len + 2}}'
             f'{route[2]: <{name_len + 2}}')
+
+
+@cli.command()
+def run():
+    """Please use 'imfast run'."""
+    raise NotImplementedError("Please use 'imfast run'.")
+
+
+@cli.command()
+def prod_run():
+    """Please use 'imfast prod-run'."""
+    raise NotImplementedError("Please use 'imfast prod-run'.")
 
 
 @cli.command()

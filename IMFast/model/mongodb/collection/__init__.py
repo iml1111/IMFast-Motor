@@ -16,7 +16,7 @@ class Model(metaclass=ABCMeta):
         """Collection indexes"""
         return []
 
-    def create_index(self):
+    def create_indexes(self):
         """Create index"""
         indexes = self.indexes()
         if indexes:
@@ -56,5 +56,8 @@ class Schema(BaseModel):
         # schema_extra = {"example": {}}
 
 
+# Collections
 from .log import Log
 from .app_config import AppConfig
+
+

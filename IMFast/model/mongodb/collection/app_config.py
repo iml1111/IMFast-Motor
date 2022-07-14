@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any
+from pymongo import IndexModel, ASCENDING
 from model.mongodb.collection import Model, Schema
 
 
@@ -21,8 +22,9 @@ class AppConfig(Model):
             }}
 
     def indexes(self) -> list:
-        # TODO Required index
-        return []
+        return [
+            IndexModel([('name', ASCENDING)])
+        ]
 
     async def upsert_author(self, author: str):
         # TODO: Change Property

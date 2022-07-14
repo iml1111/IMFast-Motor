@@ -1,5 +1,6 @@
 from typing import Type
 from pydantic import BaseModel
+from pymongo import IndexModel, ASCENDING
 from model.mongodb.collection import Model, Schema
 
 
@@ -24,8 +25,9 @@ class Log(Model):
             }}
 
     def indexes(self) -> list:
-        # TODO Required index
-        return []
+        return [
+            IndexModel([('created_at', ASCENDING)])
+        ]
 
     async def insert_one(self, log: Type[BaseModel]):
         schemized_log = self.LogSchema(**log.dict())
