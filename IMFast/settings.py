@@ -47,11 +47,3 @@ class TestSettings(Settings):
 
 
 settings = Settings()
-
-
-
-
-
-if __name__ == '__main__':
-    print(settings.dict())
-    print(BASE_DIR)
