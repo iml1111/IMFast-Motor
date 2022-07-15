@@ -15,15 +15,23 @@ class Response200ModelFactory:
         # Class Anonymization
         class_obj = ResponseModel200
         class_obj.__name__ = (
-                result_type.__name__ + str(uuid4()))
+            f"Response200_{str(uuid4())}"
+        )
         return class_obj
 
     def __call__(self, result: Any = None):
-        result = jsonable_encoder(result)
-        return orjson_res(
-            {'msg': 'ok', 'result': result},
-            status_code=200,
-        )
+        if result:
+            result = jsonable_encoder(result)
+            return orjson_res(
+                {'msg': 'ok', 'result': result},
+                status_code=200,
+            )
+        else:
+            return orjson_res(
+                {'msg': 'ok'},
+                status_code=200,
+            )
+
 
 OK = Response200ModelFactory()
 
@@ -37,15 +45,23 @@ class Response201ModelFactory:
         # Class Anonymization
         class_obj = ResponseModel201
         class_obj.__name__ = (
-                result_type.__name__ + str(uuid4()))
+            f"Response201_{str(uuid4())}"
+        )
         return class_obj
 
     def __call__(self, result: Any = None):
-        result = jsonable_encoder(result)
-        return orjson_res(
-            {'msg': 'created', 'result': result},
-            status_code=201,
-        )
+        if result:
+            result = jsonable_encoder(result)
+            return orjson_res(
+                {'msg': 'created', 'result': result},
+                status_code=201,
+            )
+        else:
+            return orjson_res(
+                {'msg': 'created'},
+                status_code=201,
+            )
+
 
 CREATED = Response201ModelFactory()
 

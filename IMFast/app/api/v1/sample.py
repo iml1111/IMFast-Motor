@@ -1,5 +1,4 @@
 import time
-from typing import Any
 from fastapi import HTTPException
 from app.response import OK, CREATED
 from model.appmodel import Champion, ChampionCreated

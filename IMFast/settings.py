@@ -26,20 +26,24 @@ class Settings(BaseSettings):
     jwt_refresh_expires: int = 3600 * 24 * 30
     # Slow API settings
     slow_api_time: float = 0.5
+    # Mongodb settings
+    mongodb_uri: str = "mongodb://localhost:27017"
+    mongodb_db_name: str = "Imfast"
+    mongodb_api_log: bool = True
 
     class Config:
         env_prefix = f"{APP_NAME.upper()}_"
         # default: development env
-        env_file = 'dev.env'
+        env_file = BASE_DIR + '/dev.env'
         env_file_encoding = 'utf-8'
 
     def init_app(self, app: FastAPI):
         ...
 
 
+class TestSettings(Settings):
+    """Test settings"""
+    slow_api_time: float = 1.0
+
+
 settings = Settings()
-
-
-if __name__ == '__main__':
-    print(settings.dict())
-    print(BASE_DIR)
