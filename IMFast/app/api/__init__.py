@@ -58,7 +58,7 @@ def init_app(
                 call_next: Callable):
             """
             Mongodb API Logger Middleware
-            # How much fast using 'gather'?
+            # FIXME How to handle model without Request.app.db?
             """
             response = await call_next(request)
             db = request.app.mongo_db

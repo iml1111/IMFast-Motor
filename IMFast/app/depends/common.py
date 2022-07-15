@@ -1,6 +1,4 @@
-from fastapi import Query, Request
-from starlette_context import context
-
+from fastapi import Query
 
 def skip_limit(
         skip: int = Query(
@@ -17,14 +15,3 @@ def skip_limit(
     return skip, limit
 
 
-async def parse_request_body(request: Request):
-    """Parse Request Body as JSON"""
-    method = str(request.method).upper()
-    # only RESTful API support body
-    if method in ('GET', 'DELETE', 'POST', 'PUT'):
-        context.update(body=await request.body())
-
-
-async def setup_db_context(request: Request):
-    """Setup DB Context"""
-    context.update(mongo_db=request.app.mongo_db)

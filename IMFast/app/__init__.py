@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.responses import ORJSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from settings import Settings, __VERSION__
-from app.depends.common import parse_request_body, setup_db_context
+from app.depends.context import parse_request_body, setup_db_context
 from app import api
 
 # Routers
