@@ -8,27 +8,27 @@ This implementation is an extension structure of `IMFast` optimized for Motor(Mo
 
 ## Model Implementation
 
-```
+```shell
 ...
 ├── app
 │   ├── api
 │   │   ├── __init__.py
 │   │   └── v1
-│   │       └── sample_model.py
+│   │       └── sample_model.py # Sample API with Mongodb
 │   └── depends
-│      └── context.py
+│      └── context.py # Context depends for easy db access
 │
 ├── model
 │   ├── __init__.py
 │   ├── appmodel
-│   │   └── log.py
+│   │   └── log.py # CRUD Pydantic Model
 │   └── mongodb
-│       ├── __init__.py
+│       ├── __init__.py # Mongodb Connector & Init.
 │       ├── collection
-│       │   ├── __init__.py
-│       │   ├── app_config.py
-│       │   └── log.py
-│       └── initializer.py
+│       │   ├── __init__.py # Base Model
+│       │   ├── app_config.py # AppConfig Collection Model
+│       │   └── log.py # Log Collection Model
+│       └── initializer.py # Mongodb Initializer
 ...
 ```
 

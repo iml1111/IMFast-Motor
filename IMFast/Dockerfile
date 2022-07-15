@@ -4,8 +4,9 @@ COPY ./ /home/IMFast/
 WORKDIR /home/IMFast/
 
 RUN apk update && \
-	pip install --upgrade pip && \
-	pip wheel --wheel-dir=/home/IMFast/wheels -r requirements.txt
+    apk add --update --no-cache alpine-sdk gcc libffi-dev && \
+    pip install --upgrade pip && \
+    pip wheel --wheel-dir=/home/IMFast/wheels -r requirements.txt
 
 FROM python:3.9-alpine
 
