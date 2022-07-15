@@ -9,6 +9,27 @@ This implementation is an extension structure of `IMFast` optimized for Motor(Mo
 ## Model Implementation
 
 ```
+...
+├── app
+│   ├── api
+│   │   ├── __init__.py
+│   │   └── v1
+│   │       └── sample_model.py
+│   └── depends
+│      └── context.py
+│
+├── model
+│   ├── __init__.py
+│   ├── appmodel
+│   │   └── log.py
+│   └── mongodb
+│       ├── __init__.py
+│       ├── collection
+│       │   ├── __init__.py
+│       │   ├── app_config.py
+│       │   └── log.py
+│       └── initializer.py
+...
 ```
 
 ## References
