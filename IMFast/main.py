@@ -22,7 +22,7 @@ def cli():
 def init_db():
     """Sample command"""
     from model.mongodb.initializer import ModelInitializer
-    initializer = ModelInitializer()
+    initializer = ModelInitializer(mongo_client)
     asyncio.run(initializer.init_model())
     click.echo("DB initialized.")
 

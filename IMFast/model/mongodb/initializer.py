@@ -2,30 +2,34 @@
 Model initializer for MongoDB.
 """
 import asyncio
+from motor.motor_asyncio import AsyncIOMotorClient
 from model.mongodb.collection import Log, AppConfig
+from settings import settings
 
 
 class ModelInitializer:
 
-    def __init__(self):
+    def __init__(self,  client: AsyncIOMotorClient):
         self.models = [
             Log,
             AppConfig,
         ]
+        self.client = client
+        self.db = client[settings.mongodb_db_name]
 
     async def init_model(self):
         """Initialize Model"""
         await asyncio.wait([
             self.init_indexes(),
             self.init_author(),
+            asyncio.sleep(1)
         ])
 
     async def init_indexes(self):
         for model in self.models:
-            model().create_indexes()
+            model(db=self.db).create_indexes()
 
-    @staticmethod
-    async def init_author():
-        author = await AppConfig().get_author()
+    async def init_author(self):
+        author = await AppConfig(db=self.db).get_author()
         if author is None:
-            await AppConfig().upsert_author('IML')
+            await AppConfig(db=self.db).upsert_author('IML')

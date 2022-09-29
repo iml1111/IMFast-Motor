@@ -11,3 +11,4 @@ requests
 httpx
 motor
 starlette-context
+dnspython
