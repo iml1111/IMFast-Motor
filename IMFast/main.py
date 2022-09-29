@@ -57,19 +57,19 @@ def routes():
 @cli.command()
 def run():
     """Please use 'imfast run'."""
-    raise NotImplementedError("Please use 'imfast run'.")
+    raise NotImplementedError("Please use 'imfast.sh run'.")
 
 
 @cli.command()
 def prod_run():
     """Please use 'imfast prod-run'."""
-    raise NotImplementedError("Please use 'imfast prod-run'.")
+    raise NotImplementedError("Please use 'imfast.sh prod-run'.")
 
 
 @cli.command()
 def test():
     """Run tests"""
-    raise NotImplementedError("Please use 'imfast test'.")
+    raise NotImplementedError("Please use 'imfast.sh test'.")
 
 if __name__ == '__main__':
     cli()
