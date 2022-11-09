@@ -2,7 +2,7 @@ from typing import Any
 from fastapi import Depends
 from loguru import logger
 from app.depends.common import skip_limit
-from model.mongodb.collection import Log, AppConfig
+from model.mongodb.collection import Log, AppConfig, LogSchema, AppConfigSchema
 from model.appmodel.log import CreateLog
 from app.response import OK, CREATED
 from . import api
@@ -11,7 +11,7 @@ from . import api
 @api.get(
     '/log',
     summary="Get Sample Log",
-    response_model=OK[list[Log.LogSchema]]
+    response_model=OK[list[LogSchema]]
 )
 async def get_sample_log(range: tuple = Depends(skip_limit)):
     skip, limit = range
@@ -19,7 +19,7 @@ async def get_sample_log(range: tuple = Depends(skip_limit)):
         Log().find(skip=skip, limit=limit)
         .to_list(length=limit)
     )
-    logs = [Log.LogSchema(**log) for log in logs]
+    logs = [LogSchema(**log) for log in logs]
     return OK(result=logs)
 
 

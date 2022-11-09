@@ -7,29 +7,6 @@ from pydantic import Field, BaseModel
 from starlette_context import context
 
 
-class Model(metaclass=ABCMeta):
-
-    def __init__(self, db: Optional[AsyncIOMotorDatabase] = None):
-        if db is not None:
-            self.col = db[self.__class__.__name__]
-        else:
-            self.col = context.get('mongo_db')[self.__class__.__name__]
-    @abstractmethod
-    def indexes(self) -> list:
-        """Collection indexes"""
-        return []
-
-    def create_indexes(self):
-        """Create index"""
-        indexes = self.indexes()
-        if indexes:
-            self.col.create_indexes(indexes)
-
-    def p(self, *args) -> dict:
-        """projection shortcut method"""
-        return {field: 1 for field in args}
-
-
 class PyObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):
@@ -59,8 +36,41 @@ class Schema(BaseModel):
         # schema_extra = {"example": {}}
 
 
+class Model(metaclass=ABCMeta):
+
+    SCHEMA = None
+
+    def __init__(self, db: Optional[AsyncIOMotorDatabase] = None):
+        if db is not None:
+            self.col = db[self.__class__.__name__]
+        else:
+            self.col = context.get('mongo_db')[self.__class__.__name__]
+        if self.SCHEMA is None:
+            raise NotImplementedError(
+                'You must define a SCHEMA for the model')
+
+    @abstractmethod
+    def indexes(self) -> list:
+        """Collection indexes"""
+        return []
+
+    def schemaize(self, data: dict) -> Schema:
+        """Schemaize data"""
+        return self.SCHEMA(**data)
+
+    def create_indexes(self):
+        """Create index"""
+        indexes = self.indexes()
+        if indexes:
+            self.col.create_indexes(indexes)
+
+    def p(self, *args) -> dict:
+        """projection shortcut method"""
+        return {field: 1 for field in args}
+
+
 # Collections
-from .log import Log
-from .app_config import AppConfig
+from .log import Log, LogSchema
+from .app_config import AppConfig, AppConfigSchema
 
 

@@ -4,9 +4,7 @@ from pymongo import IndexModel, ASCENDING
 from model.mongodb.collection import Model, Schema
 
 
-class AppConfig(Model):
-
-    class AppConfigSchema(Schema):
+class AppConfigSchema(Schema):
         """AppConfig Schema"""
         name: str
         value: Any
@@ -20,6 +18,11 @@ class AppConfig(Model):
                     'email': 'shin10256@gmail.com'
                 },
             }}
+
+
+class AppConfig(Model):
+
+    SCHEMA = AppConfigSchema
 
     def indexes(self) -> list:
         return [

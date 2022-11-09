@@ -4,9 +4,7 @@ from pymongo import IndexModel, ASCENDING
 from model.mongodb.collection import Model, Schema
 
 
-class Log(Model):
-
-    class LogSchema(Schema):
+class LogSchema(Schema):
         """Log Schema"""
         ipv4: str
         url: str
@@ -24,19 +22,24 @@ class Log(Model):
                 "status_code": 200,
             }}
 
+
+class Log(Model):
+
+    SCHEMA = LogSchema
+
     def indexes(self) -> list:
         return [
             IndexModel([('created_at', ASCENDING)])
         ]
 
     async def insert_one(self, log: Type[BaseModel]):
-        schemized_log = Log.LogSchema(**log.dict())
+        schemized_log = self.schemaize(log.dict())
         return await self.col.insert_one(
             schemized_log.dict(exclude={'id'})
         )
 
     async def insert_one_raw_dict(self, log: dict):
-        log = self.LogSchema(**log)
+        log = self.schemaize(log)
         return await self.col.insert_one(
             log.dict(exclude={'id'})
         )
@@ -48,27 +51,3 @@ class Log(Model):
             .skip(skip)
             .limit(limit)
         )
-
-
-if __name__ == '__main__':
-    log = Log.CreateLog(
-        ipv4="asd",
-        url="http://example.com",
-        method="GET",
-        params={},
-        status_code=200,
-    )
-    from model.mongodb import get_client
-    from settings import settings
-    import asyncio
-    c = get_client(settings.mongodb_uri)
-    db = c[settings.mongodb_db_name]
-    log_model = Log(db)
-
-    async def main():
-        #result = await log_model.insert(log)
-        result = log_model.find(0, 10)
-        result = await result.to_list(None)
-        print(result)
-
-    asyncio.run(main())
