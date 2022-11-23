@@ -1,6 +1,7 @@
 """Response Shortcuts"""
 from typing import Any
 from uuid import uuid4
+from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse as orjson_res
 from pydantic import BaseModel
@@ -20,8 +21,11 @@ class Response200ModelFactory:
         return class_obj
 
     def __call__(self, result: Any = None):
-        if result:
-            result = jsonable_encoder(result)
+        if result is not None:
+            result = jsonable_encoder(
+                result, 
+                custom_encoder={ObjectId: str}
+            )
             return orjson_res(
                 {'msg': 'ok', 'result': result},
                 status_code=200,
@@ -50,8 +54,11 @@ class Response201ModelFactory:
         return class_obj
 
     def __call__(self, result: Any = None):
-        if result:
-            result = jsonable_encoder(result)
+        if result is not None:
+            result = jsonable_encoder(
+                result, 
+                custom_encoder={ObjectId: str}
+            )
             return orjson_res(
                 {'msg': 'created', 'result': result},
                 status_code=201,
