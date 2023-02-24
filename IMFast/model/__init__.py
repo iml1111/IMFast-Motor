@@ -7,9 +7,10 @@ from model.mongodb.collection import AppConfig
 
 
 async def init_app(
-        app: FastAPI,
-        setting: Settings,
-        mongo_client: AsyncIOMotorClient) -> None:
+    app: FastAPI,
+    setting: Settings,
+    mongo_client: AsyncIOMotorClient
+) -> None:
     """"Model init"""
     # update server startup date (if necessary)
     mongo_db = mongo_client[setting.mongodb_db_name]

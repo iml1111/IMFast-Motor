@@ -3,7 +3,7 @@ from fastapi.responses import ORJSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from settings import Settings, __VERSION__
 from app.depends.context import parse_request_body, setup_db_context
-from app import api
+from app import api, error_handler
 
 # Routers
 from app.api.auth import auth
@@ -43,6 +43,7 @@ def create_app(
     # Built-in init
     settings.init_app(app)
     api.init_app(app, settings, mongo_client)
+    error_handler.init_app(app)
     app.mongo_client = mongo_client
     app.mongo_db = mongo_client[settings.mongodb_db_name]
 

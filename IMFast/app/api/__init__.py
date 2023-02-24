@@ -8,7 +8,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings, Settings
 from model.mongodb.collection import Log
 import model
-from app import error_handler
 
 
 def init_app(
@@ -21,7 +20,6 @@ def init_app(
     async def startup():
         """run before the application starts"""
         await model.init_app(app, app_settings, mongo_client)
-        error_handler.init_app(app)
 
     @app.on_event("shutdown")
     async def shutdown():
