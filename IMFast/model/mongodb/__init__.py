@@ -17,4 +17,4 @@ def get_client(
     )
 
 
-
+mongo_client: AsyncIOMotorClient = get_client(settings.mongodb_uri)

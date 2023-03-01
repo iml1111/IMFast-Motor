@@ -10,5 +10,4 @@ passlib[bcrypt]
 requests
 httpx
 motor
-starlette-context
 dnspython

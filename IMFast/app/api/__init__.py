@@ -3,7 +3,6 @@ import asyncio
 from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
-from starlette_context import context
 from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings, Settings
 from model.mongodb.collection import Log
@@ -37,14 +36,11 @@ def init_app(
         response.headers["X-Process-Time"] = str(process_time)
 
         if process_time >= settings.slow_api_time:
-            # Get body in the ContextMiddleware
-            request_body = context.get('body')
             log_str: str = (
                 f"\n!!! SLOW API DETECTED !!!\n"
                 f"time: {process_time}\n"
                 f"url: {request.url.path}\n"
                 f"ip: {request.client.host}\n")
-            log_str += f"body: {str(request_body)}\n"
             logger.error(log_str)
 
         return response
@@ -64,7 +60,6 @@ def init_app(
                 "ipv4": request.client.host,
                 "url": request.url.path,
                 'method': request.method,
-                'body': (context.get('body') or b'').decode(),
                 'status_code': response.status_code,
             })
             return response

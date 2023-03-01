@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Optional
 from pydantic import BaseModel
 from pymongo import IndexModel, ASCENDING
 from model.mongodb.collection import Model, Schema
@@ -9,7 +9,7 @@ class LogSchema(Schema):
         ipv4: str
         url: str
         method: str
-        body: str
+        body: Optional[str] = None
         status_code: int
 
         class Config:

@@ -1,9 +1,8 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from motor.motor_asyncio import AsyncIOMotorClient
 from settings import Settings, __VERSION__
-from app.depends.context import parse_request_body, setup_db_context
 from app import api, error_handler
+from model.mongodb import mongo_client
 
 # Routers
 from app.api.auth import auth
@@ -14,13 +13,10 @@ from app.api.v1 import api as api_v1
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from starlette_context.middleware import RawContextMiddleware
 from app.middleware import HelloMiddleware
 
 
-def create_app(
-        settings: Settings,
-        mongo_client: AsyncIOMotorClient) -> FastAPI:
+def create_app(settings: Settings, test_mode: bool = False) -> FastAPI:
     """Application Factory"""
     app = FastAPI(
         title=settings.app_name,
@@ -34,10 +30,6 @@ def create_app(
         },
         docs_url=settings.docs_url,
         default_response_class=ORJSONResponse,
-        dependencies=[
-            Depends(parse_request_body),
-            Depends(setup_db_context),
-        ],
     )
 
     # Built-in init
@@ -60,7 +52,6 @@ def create_app(
     app.add_middleware(
         GZipMiddleware,
         minimum_size=1024)
-    app.add_middleware(RawContextMiddleware)
     """
     # If you want to use middleware, you can add it here.
     app.add_middleware(HelloMiddleware)

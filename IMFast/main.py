@@ -4,13 +4,10 @@ Application Management Module
 import asyncio
 import click
 from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
 from app import create_app
-from model.mongodb import get_client
 from settings import settings
 
-mongo_client: AsyncIOMotorClient = get_client(settings.mongodb_uri)
-application: FastAPI = create_app(settings, mongo_client)
+application: FastAPI = create_app(settings)
 
 
 @click.group()
@@ -21,7 +18,9 @@ def cli():
 @cli.command()
 def init_db():
     """Sample command"""
+    from model.mongodb import mongo_client
     from model.mongodb.initializer import ModelInitializer
+
     initializer = ModelInitializer(mongo_client)
     asyncio.run(initializer.init_model())
     click.echo("DB initialized.")

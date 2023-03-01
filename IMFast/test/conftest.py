@@ -2,8 +2,6 @@ import logging
 from fastapi import FastAPI
 from loguru import logger
 import pytest
-from motor.motor_asyncio import AsyncIOMotorClient
-from model.mongodb import get_client
 from app import create_app
 from httpx import AsyncClient
 from settings import TestSettings
@@ -17,19 +15,17 @@ def anyio_backend():
     return 'asyncio'
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def app() -> FastAPI:
     """
     Create a FastAPI application for the tests.
     """
     settings: TestSettings = TestSettings()
-    mongo_client: AsyncIOMotorClient = get_client(
-        settings.mongodb_uri)
-    app: FastAPI = create_app(settings, mongo_client)
+    app: FastAPI = create_app(settings, test_mode=True)
     return app
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 async def client(app: FastAPI) -> AsyncClient:
     """
     Create a test client for the FastAPI application.

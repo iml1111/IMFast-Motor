@@ -4,7 +4,8 @@ from abc import ABCMeta, abstractmethod
 from bson.objectid import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import Field, BaseModel
-from starlette_context import context
+from model.mongodb import mongo_client
+from settings import settings
 
 
 class PyObjectId(ObjectId):
@@ -44,7 +45,7 @@ class Model(metaclass=ABCMeta):
         if db is not None:
             self.col = db[self.__class__.__name__]
         else:
-            self.col = context.get('mongo_db')[self.__class__.__name__]
+            self.col = mongo_client[settings.mongodb_db_name][self.__class__.__name__]
         if self.SCHEMA is None:
             raise NotImplementedError(
                 'You must define a SCHEMA for the model')
