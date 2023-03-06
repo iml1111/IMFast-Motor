@@ -16,7 +16,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from app.middleware import HelloMiddleware
 
 
-def create_app(settings: Settings, test_mode: bool = False) -> FastAPI:
+def create_app(settings: Settings) -> FastAPI:
     """Application Factory"""
     app = FastAPI(
         title=settings.app_name,

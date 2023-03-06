@@ -4,7 +4,7 @@ from loguru import logger
 import pytest
 from app import create_app
 from httpx import AsyncClient
-from settings import TestSettings
+from settings import settings, TestSettings
 
 # external fixtures
 from _pytest.logging import caplog as _caplog
@@ -20,8 +20,12 @@ def app() -> FastAPI:
     """
     Create a FastAPI application for the tests.
     """
-    settings: TestSettings = TestSettings()
-    app: FastAPI = create_app(settings, test_mode=True)
+    test_settings: TestSettings = TestSettings()
+    # Overving settings
+    for key, value in test_settings.dict().items():
+        if value:
+            setattr(settings, key, value)
+    app: FastAPI = create_app(settings)
     return app
 
 
@@ -38,7 +42,7 @@ async def client(app: FastAPI) -> AsyncClient:
 
 @pytest.fixture(autouse=True)
 def caplog(_caplog):
-    """Overiding pytest-capturelog's caplog fixture."""
+    """Overriding pytest-capturelog's caplog fixture."""
     class PropagatingLogger(logging.Handler):
         def emit(self, record):
             logging.getLogger(record.name).handle(record)

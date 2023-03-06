@@ -4,7 +4,6 @@ Basic Test for the API
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from loguru import logger
 
 
 def test_app_exists(app: FastAPI):

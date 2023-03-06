@@ -1,5 +1,6 @@
 import os
-from pydantic import BaseSettings, Field
+from typing import Optional
+from pydantic import BaseSettings, Field, validator
 from fastapi import FastAPI
 
 __AUTHOR__ = "IML"
@@ -12,6 +13,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 class Settings(BaseSettings):
     # Description settings
     app_name: str = Field(APP_NAME, env='APP_NAME')
+    test_mode: bool = False
     description: str = "Welcome to IMFast."
     term_of_service: str = "https://github.com/iml1111"
     contact_name: str = __AUTHOR__
@@ -41,9 +43,23 @@ class Settings(BaseSettings):
         ...
 
 
-class TestSettings(Settings):
-    """Test settings"""
+class TestSettings(BaseSettings):
+    """Test Overriding settings"""
+    test_mode: bool = True
     slow_api_time: float = 1.0
+    mongodb_uri: Optional[str] = None
+    mongodb_db_name: str = "ImfastTestDB"
+    
+    class Config:
+        env_file = BASE_DIR + "/.test.env"
+        env_file_encoding = 'utf-8'
+
+        @validator('mongodb_uri', pre=True)
+        def mongodb_uri(cls, v):
+            if v is not None:
+                raise ValueError(
+                    "Do not Override mongodb_uri in TestSettings!")
+            return v
 
 
 settings = Settings()
