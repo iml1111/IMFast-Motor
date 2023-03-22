@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod
 from bson.objectid import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import Field, BaseModel
-from model.mongodb import mongo_client
 from settings import settings
 
 
@@ -41,11 +40,8 @@ class Model(metaclass=ABCMeta):
 
     SCHEMA = None
 
-    def __init__(self, db: Optional[AsyncIOMotorDatabase] = None):
-        if db is not None:
-            self.col = db[self.__class__.__name__]
-        else:
-            self.col = mongo_client[settings.mongodb_db_name][self.__class__.__name__]
+    def __init__(self, db: AsyncIOMotorDatabase):
+        self.col = db[self.__class__.__name__]
         if self.SCHEMA is None:
             raise NotImplementedError(
                 'You must define a SCHEMA for the model')
