@@ -43,23 +43,21 @@ class Settings(BaseSettings):
         ...
 
 
-class TestSettings(BaseSettings):
+class TestSettings(Settings):
     """Test Overriding settings"""
     test_mode: bool = True
-    slow_api_time: float = 1.0
-    mongodb_uri: Optional[str] = None
     mongodb_db_name: str = "ImfastTestDB"
     
     class Config:
-        env_file = BASE_DIR + "/.test.env"
+        env_file = BASE_DIR + "/test.env"
         env_file_encoding = 'utf-8'
-
-        @validator('mongodb_uri', pre=True)
-        def mongodb_uri(cls, v):
-            if v is not None:
-                raise ValueError(
-                    "Do not Override mongodb_uri in TestSettings!")
-            return v
 
 
 settings = Settings()
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    test_settings = TestSettings()
+    pprint(test_settings.dict())
+

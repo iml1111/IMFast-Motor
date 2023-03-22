@@ -4,7 +4,7 @@ from loguru import logger
 import pytest
 from app import create_app
 from httpx import AsyncClient
-from settings import settings, TestSettings
+from settings import TestSettings
 
 # external fixtures
 from _pytest.logging import caplog as _caplog
@@ -21,11 +21,7 @@ def app() -> FastAPI:
     Create a FastAPI application for the tests.
     """
     test_settings: TestSettings = TestSettings()
-    # Overving settings
-    for key, value in test_settings.dict().items():
-        if value:
-            setattr(settings, key, value)
-    app: FastAPI = create_app(settings)
+    app: FastAPI = create_app(test_settings)
     return app
 
 

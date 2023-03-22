@@ -70,5 +70,6 @@ def test():
     """Run tests"""
     raise NotImplementedError("Please use 'imfast.sh test'.")
 
+
 if __name__ == '__main__':
     cli()
