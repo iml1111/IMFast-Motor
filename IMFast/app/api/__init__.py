@@ -1,5 +1,4 @@
 import time
-import asyncio
 from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
