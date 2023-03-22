@@ -48,12 +48,9 @@ def init_app(
         async def mongodb_api_logger(
                 request: Request,
                 call_next: Callable):
-            """
-            Mongodb API Logger Middleware
-            # FIXME How to handle model without Request.app.db?
-            """
+            """Mongodb API Logger Middleware"""
             response = await call_next(request)
-            db = request.app.mongo_db
+            db = request.app.mongodb
             await Log(db).insert_one_raw_dict({
                 "ipv4": request.client.host,
                 "url": request.url.path,
