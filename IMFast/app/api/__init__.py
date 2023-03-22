@@ -1,24 +1,22 @@
 import time
-import asyncio
 from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
-from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings, Settings
 from model.mongodb.collection import Log
 import model
 
 
 def init_app(
-        app: FastAPI,
-        app_settings: Settings,
-        mongo_client: AsyncIOMotorClient) -> None:
+    app: FastAPI,
+    app_settings: Settings,
+) -> None:
     """Declare your built-in Functional Middleware"""
 
     @app.on_event("startup")
     async def startup():
         """run before the application starts"""
-        await model.init_app(app, app_settings, mongo_client)
+        await model.init_app(app)
 
     @app.on_event("shutdown")
     async def shutdown():
@@ -50,12 +48,9 @@ def init_app(
         async def mongodb_api_logger(
                 request: Request,
                 call_next: Callable):
-            """
-            Mongodb API Logger Middleware
-            # FIXME How to handle model without Request.app.db?
-            """
+            """Mongodb API Logger Middleware"""
             response = await call_next(request)
-            db = request.app.mongo_db
+            db = request.app.mongodb
             await Log(db).insert_one_raw_dict({
                 "ipv4": request.client.host,
                 "url": request.url.path,

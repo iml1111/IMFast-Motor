@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from settings import Settings, __VERSION__
 from app import api, error_handler
-from model.mongodb import mongo_client
+import model
+from model import mongodb
 
 # Routers
 from app.api.auth import auth
@@ -32,12 +33,14 @@ def create_app(settings: Settings) -> FastAPI:
         default_response_class=ORJSONResponse,
     )
 
+    # Global init
+    app.mongodb_cli = mongodb.get_client(settings.mongodb_uri)
+    app.mongodb = app.mongodb_cli[settings.mongodb_db_name]
+
     # Built-in init
     settings.init_app(app)
-    api.init_app(app, settings, mongo_client)
+    api.init_app(app, settings)
     error_handler.init_app(app)
-    app.mongo_client = mongo_client
-    app.mongo_db = mongo_client[settings.mongodb_db_name]
 
     # Extension/Middleware init
     app.add_middleware(

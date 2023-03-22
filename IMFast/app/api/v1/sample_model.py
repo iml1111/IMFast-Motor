@@ -1,8 +1,9 @@
 from typing import Any
 from fastapi import Depends
-from loguru import logger
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.depends.common import skip_limit
-from model.mongodb.collection import Log, AppConfig, LogSchema, AppConfigSchema
+from app.depends.mongo import mongodb
+from model.mongodb.collection import Log, AppConfig, LogSchema
 from model.appmodel.log import CreateLog
 from app.response import OK, CREATED
 from . import api
@@ -13,13 +14,13 @@ from . import api
     summary="Get Sample Log",
     response_model=OK[list[LogSchema]]
 )
-async def get_sample_log(range: tuple = Depends(skip_limit)):
+async def get_sample_log(
+    range: tuple = Depends(skip_limit),
+    db: AsyncIOMotorDatabase = Depends(mongodb),
+):
     skip, limit = range
-    logs = await (
-        Log().find(skip=skip, limit=limit)
-        .to_list(length=limit)
-    )
-    logs = [LogSchema(**log) for log in logs]
+    logs = Log(db).find(skip=skip, limit=limit)
+    logs = [LogSchema(**log) async for log in logs]
     return OK(result=logs)
 
 
@@ -28,8 +29,11 @@ async def get_sample_log(range: tuple = Depends(skip_limit)):
     summary="Create Sample Log",
     response_model=CREATED[str],
 )
-async def create_sample_log(log: CreateLog):
-    result = await Log().insert_one(log)
+async def create_sample_log(
+    log: CreateLog,
+    db: AsyncIOMotorDatabase = Depends(mongodb),
+):
+    result = await Log(db).insert_one(log)
     return CREATED(result=str(result.inserted_id))
 
 
@@ -37,8 +41,10 @@ async def create_sample_log(log: CreateLog):
     '/author',
     summary="Get Author",
     response_model=OK[Any])
-async def get_author():
-    author = await AppConfig().get_author()
+async def get_author(
+    db: AsyncIOMotorDatabase = Depends(mongodb),
+):
+    author = await AppConfig(db).get_author()
     return OK(result=author['value'])
 
 
@@ -47,6 +53,9 @@ async def get_author():
     summary="Update Author",
     response_model=CREATED[Any]
 )
-async def update_author(author: str):
-    await AppConfig().upsert_author(author)
+async def update_author(
+    author: str,
+    db: AsyncIOMotorDatabase = Depends(mongodb),
+):
+    await AppConfig(db).upsert_author(author)
     return CREATED()

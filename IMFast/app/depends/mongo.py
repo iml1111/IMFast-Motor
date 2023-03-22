@@ -1,14 +1,12 @@
 from fastapi import Request
-from motor.motor_asyncio import AsyncIOMotorClient
-from motor.core import AgnosticDatabase
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 
-def mongo_client(request: Request) -> AsyncIOMotorClient:
+def mongodb_cli(request: Request) -> AsyncIOMotorClient:
     """Get MongoDB Client"""
-    return request.app.mongo_client
+    return request.app.mongdb_cli
 
 
-def mongo_db(request: Request) -> AgnosticDatabase:
+def mongodb(request: Request) -> AsyncIOMotorDatabase:
     """Get MongoDB Database"""
-    return request.app.mongo_db
-
+    return request.app.mongodb
