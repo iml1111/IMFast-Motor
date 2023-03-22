@@ -5,6 +5,8 @@ import asyncio
 import click
 from fastapi import FastAPI
 from app import create_app
+from model import mongodb
+from model.mongodb.initializer import ModelInitializer
 from settings import settings
 
 application: FastAPI = create_app(settings)
@@ -18,9 +20,7 @@ def cli():
 @cli.command()
 def init_db():
     """Sample command"""
-    from model.mongodb import mongo_client
-    from model.mongodb.initializer import ModelInitializer
-
+    mongo_client = mongodb.get_client(settings.mongodb_uri)
     initializer = ModelInitializer(mongo_client)
     asyncio.run(initializer.init_model())
     click.echo("DB initialized.")
