@@ -3,22 +3,21 @@ import asyncio
 from typing import Callable
 from fastapi import FastAPI, Request
 from loguru import logger
-from motor.motor_asyncio import AsyncIOMotorClient
 from settings import settings, Settings
 from model.mongodb.collection import Log
 import model
 
 
 def init_app(
-        app: FastAPI,
-        app_settings: Settings,
-        mongo_client: AsyncIOMotorClient) -> None:
+    app: FastAPI,
+    app_settings: Settings,
+) -> None:
     """Declare your built-in Functional Middleware"""
 
     @app.on_event("startup")
     async def startup():
         """run before the application starts"""
-        await model.init_app(app, app_settings, mongo_client)
+        await model.init_app(app)
 
     @app.on_event("shutdown")
     async def shutdown():
