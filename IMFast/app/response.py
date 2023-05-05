@@ -1,7 +1,6 @@
 """Response Shortcuts"""
-from typing import Any
+from typing import Any, Optional
 from uuid import uuid4
-from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse as orjson_res
 from pydantic import BaseModel
@@ -76,7 +75,7 @@ def forbidden(detail: str):
 not_found = orjson_res(
     {
         'msg': 'not_found',
-        'detail': "resource not found"
+        'detail': "resource_not_found"
     },
     status_code=404
 )
@@ -84,7 +83,15 @@ not_found = orjson_res(
 conflict = orjson_res(
     {
         'msg': 'conflict',
-        'detail': "resource already exists"
+        'detail': "resource_already_exists"
     },
     status_code=409
 )
+
+
+def unprocessable_entity(detail: str, errors: Optional[list] = None):
+    if errors:
+        body = {'msg': 'unprocessable_entity', 'detail': detail, 'errors': errors}
+    else:
+        body = {'msg': 'unprocessable_entity', 'detail': detail}
+    return orjson_res(body, status_code=422)
