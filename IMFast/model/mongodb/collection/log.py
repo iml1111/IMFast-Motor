@@ -25,21 +25,19 @@ class LogSchema(Schema):
 
 class Log(Model):
 
-    SCHEMA = LogSchema
-
     def indexes(self) -> list:
         return [
             IndexModel([('created_at', ASCENDING)])
         ]
 
     async def insert_one(self, log: Type[BaseModel]):
-        schemized_log = self.schemaize(log.dict())
+        schemized_log = LogSchema(**log.dict())
         return await self.col.insert_one(
             schemized_log.dict(exclude={'id'})
         )
 
     async def insert_one_raw_dict(self, log: dict):
-        log = self.schemaize(log)
+        log = LogSchema(**log)
         return await self.col.insert_one(
             log.dict(exclude={'id'})
         )

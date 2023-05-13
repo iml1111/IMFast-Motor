@@ -1,6 +1,7 @@
 from uuid import uuid4
-from datetime import datetime, timedelta
+from datetime import timedelta
 from jose import JWTError, jwt
+from controller.util import utc_now
 from settings import settings
 
 
@@ -96,7 +97,7 @@ def _create_token(
     secret_key: str,
     algorithm: str,
 ) -> str:
-    now_time = datetime.utcnow()
+    now_time = utc_now()
     to_encode = {
         'jti': str(uuid4()),
         'type': token_type,

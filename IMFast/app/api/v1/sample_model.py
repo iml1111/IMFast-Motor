@@ -40,7 +40,7 @@ async def create_sample_log(
 @api.get(
     '/author',
     summary="Get Author",
-    response_model=OK[Any])
+    response_model=OK[str])
 async def get_author(
     db: AsyncIOMotorDatabase = Depends(mongodb),
 ):
@@ -51,7 +51,7 @@ async def get_author(
 @api.put(
     '/author',
     summary="Update Author",
-    response_model=CREATED[Any]
+    response_model=CREATED[str]
 )
 async def update_author(
     author: str,

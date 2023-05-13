@@ -1,28 +1,26 @@
-from datetime import datetime
 from typing import Any
 from pymongo import IndexModel, ASCENDING
+from controller.util import utc_now
 from model.mongodb.collection import Model, Schema
 
 
 class AppConfigSchema(Schema):
-        """AppConfig Schema"""
-        name: str
-        value: Any
+    """AppConfig Schema"""
+    name: str
+    value: Any
 
-        class Config:
-            # Document Sample
-            schema_extra = {"example": {
-                "name": "author",
-                "value": {
-                    'name': 'IML',
-                    'email': 'shin10256@gmail.com'
-                },
-            }}
+    class Config:
+        # Document Sample
+        schema_extra = {"example": {
+            "name": "author",
+            "value": {
+                'name': 'IML',
+                'email': 'shin10256@gmail.com'
+            },
+        }}
 
 
 class AppConfig(Model):
-
-    SCHEMA = AppConfigSchema
 
     def indexes(self) -> list:
         return [
@@ -34,7 +32,7 @@ class AppConfig(Model):
             {'name': 'author'},
             {'$set': {
                 'value': author,
-                'updated_at': datetime.now(),
+                'updated_at': utc_now(),
             }},
             upsert=True
         )
@@ -48,8 +46,8 @@ class AppConfig(Model):
         return await self.col.update_one(
             {'name': 'server_startup_date'},
             {'$set': {
-                'value': datetime.now(),
-                'updated_at': datetime.now(),
+                'value': utc_now(),
+                'updated_at': utc_now(),
             }},
             upsert=True
         )

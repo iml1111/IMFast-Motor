@@ -1,10 +1,11 @@
-from typing import Optional
+import pytz
 from datetime import datetime
 from abc import ABCMeta, abstractmethod
 from bson.objectid import ObjectId
+from bson.codec_options import CodecOptions
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import Field, BaseModel
-from settings import settings
+from controller.util import utc_now
 
 
 class PyObjectId(ObjectId):
@@ -26,8 +27,8 @@ class PyObjectId(ObjectId):
 class Schema(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     version: int = Field(default=1, alias="__version__")
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
 
     class Config:
         allow_population_by_field_name = True
@@ -36,24 +37,29 @@ class Schema(BaseModel):
         # schema_extra = {"example": {}}
 
 
-class Model(metaclass=ABCMeta):
+class EmbeddedSchema(BaseModel):
 
-    SCHEMA = None
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class Model(metaclass=ABCMeta):
 
     def __init__(self, db: AsyncIOMotorDatabase):
         self.col = db[self.__class__.__name__]
-        if self.SCHEMA is None:
-            raise NotImplementedError(
-                'You must define a SCHEMA for the model')
+        self.col = self.col.with_options(
+            codec_options=CodecOptions(
+                tz_aware=True,
+                tzinfo=pytz.utc
+            )
+        )
 
     @abstractmethod
     def indexes(self) -> list:
         """Collection indexes"""
         return []
-
-    def schemaize(self, data: dict) -> Schema:
-        """Schemaize data"""
-        return self.SCHEMA(**data)
 
     def create_indexes(self):
         """Create index"""
@@ -61,9 +67,10 @@ class Model(metaclass=ABCMeta):
         if indexes:
             self.col.create_indexes(indexes)
 
-    def p(self, *args) -> dict:
+    @staticmethod
+    def _p(*args) -> dict:
         """projection shortcut method"""
-        return {field: 1 for field in args}
+        return {'_id': 0, **{field: 1 for field in args}}
 
 
 # Collections
