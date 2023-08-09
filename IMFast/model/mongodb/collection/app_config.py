@@ -1,5 +1,6 @@
 from typing import Any
 from pymongo import IndexModel, ASCENDING
+from pydantic import ConfigDict
 from controller.util import utc_now
 from model.mongodb.collection import Model, Schema
 
@@ -9,15 +10,15 @@ class AppConfigSchema(Schema):
     name: str
     value: Any
 
-    class Config:
-        # Document Sample
-        schema_extra = {"example": {
+    model_config = ConfigDict(
+        json_schema_extra={"example": {
             "name": "author",
             "value": {
                 'name': 'IML',
                 'email': 'shin10256@gmail.com'
             },
         }}
+    )
 
 
 class AppConfig(Model):
