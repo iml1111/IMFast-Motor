@@ -31,8 +31,10 @@ async def create_champion(
     champion: Champion
 ):
     """ In-Out Example"""
-    return CREATED[ChampionCreated](
-        result=champion
+    return CREATED(
+        ChampionCreated(
+            name=champion.name
+        )
     )
 
 

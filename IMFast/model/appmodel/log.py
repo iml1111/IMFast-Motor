@@ -1,5 +1,5 @@
 """MongoDB Log AppModel"""
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CreateLog(BaseModel):
@@ -9,11 +9,14 @@ class CreateLog(BaseModel):
     body: str
     status_code: int
 
-    class Config:
-        schema_extra = {"example": {
-            "ipv4": "8.8.8.8",
-            "url": "/your/api/path",
-            "method": "GET",
-            "body": "Some body",
-            "status_code": 200,
-        }}
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "ipv4": "8.8.8.8",
+                "url": "/your/api/path",
+                "method": "GET",
+                "body": "Some body",
+                "status_code": 200,
+            }
+        }
+    )
