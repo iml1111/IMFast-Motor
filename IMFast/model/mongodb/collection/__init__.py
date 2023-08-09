@@ -32,7 +32,6 @@ class EmbeddedSchema(BaseModel):
     )
 
 
-
 class Model(metaclass=ABCMeta):
 
     def __init__(self, db: AsyncIOMotorDatabase):
