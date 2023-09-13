@@ -1,9 +1,9 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from fastapi import FastAPI
+
 
 __AUTHOR__ = "IML"
-__VERSION__ = "0.5.1"
+__VERSION__ = "0.6.1"
 
 APP_NAME = "IMFast"
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -39,9 +39,6 @@ class Settings(BaseSettings):
         env_file_encoding='utf-8',
     )
 
-    def init_app(self, app: FastAPI):
-        ...
-
 
 class TestSettings(Settings):
     """Test Overriding settings"""
@@ -54,13 +51,3 @@ class TestSettings(Settings):
         env_file=BASE_DIR + "/test.env",
         env_file_encoding='utf-8',
     )
-
-
-settings = Settings()
-
-
-if __name__ == '__main__':
-    from pprint import pprint
-    test_settings = TestSettings()
-    pprint(test_settings.model_dump())
-

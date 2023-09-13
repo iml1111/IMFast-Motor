@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from settings import Settings, __VERSION__
 from app import api, error_handler
-import model
 from model import mongodb
 
 # Routers
@@ -36,9 +35,9 @@ def create_app(settings: Settings) -> FastAPI:
     # Global init
     app.mongodb_cli = mongodb.get_client(settings.mongodb_uri)
     app.mongodb = app.mongodb_cli[settings.mongodb_db_name]
+    app.settings = settings
 
     # Built-in init
-    settings.init_app(app)
     api.init_app(app, settings)
     error_handler.init_app(app)
 

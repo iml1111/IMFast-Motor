@@ -2,20 +2,18 @@
 Model initializer for MongoDB.
 """
 import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from model.mongodb.collection import Log, AppConfig
-from settings import settings
 
 
 class ModelInitializer:
 
-    def __init__(self,  client: AsyncIOMotorClient):
+    def __init__(self,  db: AsyncIOMotorDatabase):
         self.models = [
             Log,
             AppConfig,
         ]
-        self.client = client
-        self.db = client[settings.mongodb_db_name]
+        self.db = db
 
     async def init_model(self):
         """Initialize Model"""

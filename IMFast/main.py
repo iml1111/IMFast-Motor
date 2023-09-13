@@ -7,9 +7,9 @@ from fastapi import FastAPI
 from app import create_app
 from model import mongodb
 from model.mongodb.initializer import ModelInitializer
-from settings import settings
+from settings import Settings
 
-application: FastAPI = create_app(settings)
+application: FastAPI = create_app(Settings())
 
 
 @click.group()
@@ -20,8 +20,7 @@ def cli():
 @cli.command()
 def init_db():
     """Sample command"""
-    mongo_client = mongodb.get_client(settings.mongodb_uri)
-    initializer = ModelInitializer(mongo_client)
+    initializer = ModelInitializer(application.mongodb)
     asyncio.run(initializer.init_model())
     click.echo("DB initialized.")
 
