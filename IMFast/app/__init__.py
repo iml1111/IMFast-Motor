@@ -29,6 +29,7 @@ def create_app(settings: Settings) -> FastAPI:
             "email": settings.contact_email
         },
         docs_url=settings.docs_url,
+        redoc_url=settings.redoc_url,
         default_response_class=ORJSONResponse,
     )
 
