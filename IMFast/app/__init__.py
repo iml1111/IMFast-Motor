@@ -1,7 +1,8 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from settings import Settings, __VERSION__
-from app import api, error_handler
+from app import error_handler
 from model import mongodb
 
 # Routers
@@ -13,11 +14,18 @@ from app.api.v1 import api as api_v1
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from app.middleware import HelloMiddleware
+from app import middleware
 
 
 def create_app(settings: Settings) -> FastAPI:
     """Application Factory"""
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        # Do something before the application starts
+        yield
+        # Do something after the application terminates
+
     app = FastAPI(
         title=settings.app_name,
         description=settings.description,
@@ -31,6 +39,7 @@ def create_app(settings: Settings) -> FastAPI:
         docs_url=settings.docs_url,
         redoc_url=settings.redoc_url,
         default_response_class=ORJSONResponse,
+        lifespan=lifespan
     )
 
     # Global init
@@ -39,7 +48,7 @@ def create_app(settings: Settings) -> FastAPI:
     app.settings = settings
 
     # Built-in init
-    api.init_app(app, settings)
+    middleware.init_app(app, settings)
     error_handler.init_app(app)
 
     # Extension/Middleware init
@@ -57,7 +66,7 @@ def create_app(settings: Settings) -> FastAPI:
         minimum_size=1024)
     """
     # If you want to use middleware, you can add it here.
-    app.add_middleware(HelloMiddleware)
+    app.add_middleware(middleware.HelloMiddleware)
     """
 
     # Register Routers
