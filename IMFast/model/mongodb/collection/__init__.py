@@ -1,10 +1,14 @@
 import pytz
+from typing import Optional
 from datetime import datetime
 from abc import ABCMeta, abstractmethod
 from bson.objectid import ObjectId
 from bson.codec_options import CodecOptions
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import Field, BaseModel, ConfigDict, field_serializer
+from pymongo.write_concern import WriteConcern
+from pymongo.read_concern import ReadConcern
+from pymongo.read_preferences import ReadPreference
 from controller.util import utc_now
 
 
@@ -34,13 +38,22 @@ class EmbeddedSchema(BaseModel):
 
 class Model(metaclass=ABCMeta):
 
-    def __init__(self, db: AsyncIOMotorDatabase):
+    def __init__(
+        self, 
+        db: AsyncIOMotorDatabase,
+        read_concern: Optional[ReadConcern] = None,
+        write_concern: Optional[WriteConcern] = None,
+        read_preference: Optional[ReadPreference] = None,
+    ):
         self.col = db[self.__class__.__name__]
         self.col = self.col.with_options(
             codec_options=CodecOptions(
                 tz_aware=True,
                 tzinfo=pytz.utc
-            )
+            ),
+            read_concern=read_concern,
+            write_concern=write_concern,
+            read_preference=read_preference
         )
 
     @abstractmethod
